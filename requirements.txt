@@ -1,0 +1,8 @@
+# first apt install python3-tk
+pykml
+fastkml
+geopandas
+fiona
+ogr
+fastkml
+geemap
