@@ -1,4 +1,8 @@
-def ExportCol_Sentinel1(roi, channel, min, max, idx, jdx, timeframe, numImgs, opts):
+import ee
+import os
+import requests
+
+def ExportCol_Sentinel1(roi, channel, min, max, idx, jdx, timeframe, numImgs, opts, aoi_names):
   # [min, max]: Sentinel-1, Channel settings
   # channel: is the selected band for the sentinel-1
     try:

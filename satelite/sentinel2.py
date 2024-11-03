@@ -1,11 +1,16 @@
-def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplete_images, opts):
+import ee
+import os
+import requests
+from utils import geometry
+
+def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplete_images, opts, aoi_names):
   # 
   for i in range(0,opts.numImgs,1):
     try:
         aoi_geometry = ee.Geometry.Polygon(roi ,None,False)
         ffa_s = ee.ImageCollection('COPERNICUS/S2') \
                         .filterBounds(aoi_geometry) \
-                        .filterDate(ee.Date(starting_date), ee.Date(ending_date)) \
+                        .filterDate(ee.Date(opts.starting_date), ee.Date(opts.ending_date)) \
                         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
         colList = ffa_s.toList(ffa_s.size());                   
 
@@ -24,12 +29,12 @@ def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplet
       
         # Check the image
         if channel == 'B2':
-            img_idx = Check_image(i, img_data, percentage)
+            img_idx = geometry.Check_image(i, img_data, percentage)
             if img_idx != None:
                 incomplete_images.append(img_idx)
       
         # Image path
-        path =  + '/' + aoi_names[idx] + '/Sentinel-2/' + id_short + '/'
+        path =  + '/' + aoi_names[idx] + '/Sentinel-2/' + id_short + '/' # new path needed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         if i not in incomplete_images:
             # Creates the folder but the flag need to be turned off beacause it will try to makedir after the creation
@@ -42,7 +47,7 @@ def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplet
                 with open(path + channel + '.tiff', 'wb') as handler:
                     handler.write(img_data)
         else:
-                path = path = folder_dataset + '/review/' + aoi_names[idx] + '/' + id_short + '/'
+                path = "redothepath"
                 try:
                     os.makedirs(path)
                     with open(path + channel + '.tiff', 'wb') as handler:
