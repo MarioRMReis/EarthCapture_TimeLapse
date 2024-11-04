@@ -38,8 +38,9 @@ def get_squares(aois):
         centroid_width = (max_width+min_width)/2
         centroid_height = (max_height+min_height)/2
 
-        if ((centroid_width + w_aux) > max_width) or ((centroid_height + h_aux) > max_height) or ((centroid_width - w_aux) < min_width) or((centroid_height - h_aux) < min_height):
-            raise Exception("Area of interst outside of choosen frame.")
+        #if ((centroid_width + w_aux) > max_width) or ((centroid_height + h_aux) > max_height) or ((centroid_width - w_aux) < min_width) or((centroid_height - h_aux) < min_height):
+            #raise Exception("Area of interst outside of choosen frame.")
+            
 
         aoi_new = [[[(centroid_width-w_aux), (centroid_height+h_aux)], [(centroid_width-w_aux), (centroid_height-h_aux)], [(centroid_width+w_aux), (centroid_height-h_aux)], [(centroid_width+w_aux), (centroid_height+h_aux)]]]
         new_aois.append(aoi_new)
@@ -53,12 +54,12 @@ def get_mask(path, aoi, size, timeframe):
     #     - aoi -> Area of interest of the landfield
     #     - size = [sizeX, sizeY] -> size of the mask, (ie: 128x128, 256x256, 354x128...)
     aoi_mask = ee.Geometry.Polygon(aoi,None,False)
-    ffa_s2 = ee.ImageCollection('COPERNICUS/S2') \
+    ffa_s2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED') \
                             .filterBounds(aoi_mask) \
                             .filterDate(ee.Date(timeframe[0]), ee.Date(timeframe[1]))
     colList = ffa_s2.toList(30)
     # This part get's the land area image needed to create the mask --------------
-    img = ee.Image(colList.get(17)).double().clip(aoi_mask)
+    img = ee.Image(colList.get(-1)).double().clip(aoi_mask)
     rgb = ['B4','B3','B2']
     url = img.getThumbURL({"min":-200000, "max":-200000,"bands":rgb})
 
@@ -81,3 +82,13 @@ def get_mask(path, aoi, size, timeframe):
     except:
         cv2.imwrite(path +'mask.jpg', img_zeros)
 
+
+def Check_image(idx, image, percentage):
+    # B2 - using this band
+    decoded = cv2.imdecode(np.frombuffer(image, np.uint8), -1)
+    nonZero_percentage = ((np.count_nonzero(decoded)*100)/decoded.size)
+
+    if nonZero_percentage < percentage:
+        return idx
+    else:
+        return

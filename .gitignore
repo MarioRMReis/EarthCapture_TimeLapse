@@ -3,4 +3,5 @@ __pycache__/
 results/
 saved/
 temp/
+test_file.py
 *.gif
