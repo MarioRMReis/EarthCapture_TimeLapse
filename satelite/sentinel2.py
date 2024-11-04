@@ -3,11 +3,11 @@ import os
 import requests
 from utils import geometry
 
-def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplete_images, opts, aoi_name):
+def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplete_images, opts, aoi_names):
     for i in range(0,opts.numImgs,1):
         try:
             aoi_geometry = ee.Geometry.Polygon(roi ,None,False)
-            ffa_s = ee.ImageCollection('COPERNICUS/S2') \
+            ffa_s = ee.ImageCollection('COPERNICUS/S2_HARMONIZED') \
                             .filterBounds(aoi_geometry) \
                             .filterDate(ee.Date(opts.starting_date), ee.Date(opts.ending_date)) \
                             .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
@@ -32,9 +32,10 @@ def ExportCol_Sentinel2(roi, channel,  min, max, idx, jdx, percentage, incomplet
                 if img_idx != None:
                     incomplete_images.append(img_idx)
 
-            path = os.path.join(opts.save_folder, aoi_name, "Sentinel-2", channel)
+            path = os.path.join(opts.save_folder, aoi_names, "Sentinel-2", channel)
             if not os.path.exists(path):
                 os.makedirs(path)
+                print('Whhatt')
 
             # Image path
             if i not in incomplete_images:

@@ -15,13 +15,13 @@ def get_argparser():
 
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=str(date.today() - timedelta(days=14)), 
+    parser.add_argument("--start_date", type=str, default=(date.today() - timedelta(days=31)), 
                         help="Starting date from witch we are going to start requesting images")
-    parser.add_argument("--end_date", type=str, default=str(date.today()), 
+    parser.add_argument("--end_date", type=str, default=date.today(), 
                         help="Ending date from witch we are going to start requesting images")
     parser.add_argument("--window_size", type=int, default=128, 
                         help="Size of the square framing the area of interest.")
-
+    
     return parser
 
 
@@ -30,6 +30,9 @@ def main():
     # Get input arguments
     opts = get_argparser().parse_args()
     
+    numDays = opts.end_date- opts.start_date
+    numImgs = numDays.days
+    opts.numImgs = numImgs
     # Trigger the authentication flow.
     ee.Authenticate()
     # Initialize the library.
@@ -66,14 +69,14 @@ def main():
     #-------------------
     for i, aoi in enumerate(aoi_square):
         for j, channel in enumerate(bands_s1):
-            # def ExportCol_Sentinel1(roi, channel, interval, aoi_num, jdx, timeframe, numImgs, save_folder, aoi_names):
-            sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, [opts.start_date, opts.end_date])
+            nnnn = 10
+            #sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, opts, aoi_names)
             
 
 
     aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
 
-    ffa_s2 = ee.Image(ee.ImageCollection('COPERNICUS/S2') 
+    ffa_s2 = ee.Image(ee.ImageCollection('COPERNICUS/S2_HARMONIZED') 
                         .filterBounds(aoi_bands) 
                         .first() 
                         .clip(aoi_bands))
@@ -91,14 +94,14 @@ def main():
     max = [2700, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 3200, 2500, 3000]
 
     bands_s2.insert(0,bands_s2.pop(bands_s2.index('B2')))
-
-    for idx, a in enumerate(aoi_square):
-        for jdx, b in enumerate(bands_s2):
-            if b == 'B2':
+    for i, roi in enumerate(aoi_square):
+        for j, channel in enumerate(bands_s2):
+            if channel == 'B2':
                 incomplete_images = []
-                incomplete_images_B2 =sentinel2.ExportCol_Sentinel2(a, b, min, max, idx, jdx, 99, incomplete_images)
+                incomplete_images_B2 =sentinel2.ExportCol_Sentinel2(roi, channel, min, max, i, j, 99, incomplete_images, opts, aoi_names)
+                print("scan")
             else:
-                sentinel2.ExportCol_Sentinel2(a, b, min, max, idx, jdx, 99, incomplete_images_B2)
+                sentinel2.ExportCol_Sentinel2(roi, channel, min, max, i, j, 99, incomplete_images_B2, opts, aoi_names)
 
 
 if __name__ == '__main__':

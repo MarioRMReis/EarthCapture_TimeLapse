@@ -2,7 +2,7 @@ import ee
 import os
 import requests
 
-def ExportCol_Sentinel1(roi, channel, interval, aoi_num, jdx, timeframe, numImgs, opts, aoi_names):
+def ExportCol_Sentinel1(roi, channel, interval, aoi_num, jdx, opts, aoi_names):
   # interval-[min[num,num], max[num,num]]: Sentinel-1, Channel settings
   # channel: is the selected band for the sentinel-1
     try:
@@ -10,9 +10,9 @@ def ExportCol_Sentinel1(roi, channel, interval, aoi_num, jdx, timeframe, numImgs
             aoi_geometry = ee.Geometry.Polygon(roi ,None,False)
             ffa_s = ee.ImageCollection('COPERNICUS/S1_GRD') \
                             .filterBounds(aoi_geometry) \
-                            .filterDate(ee.Date(timeframe[0]), ee.Date(timeframe[1]))
+                            .filterDate(ee.Date(str(opts.start_date)), ee.Date(str(opts.end_date)))
                             
-            colList = ffa_s.toList(numImgs); 
+            colList = ffa_s.toList(opts.numImgs); 
 
             img = ee.Image(colList.get(i)).double().clip(aoi_geometry)
             # Exeption beacause to get a RGB channel with the Sentinel-1 we need to correspond each channel and compute the last
