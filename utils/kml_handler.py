@@ -26,7 +26,7 @@ def kml_reader(kml_files):
                     n = rs[7::].split(',')
                     aux.append([float(n[i]) for i in range(len(n)-1)])
                 elif idx == (len(roi_str)-1): 
-                    print(rs)
+                    break
                 else:
                     n = rs.split(',')
                     aux.append([float(n[i]) for i in range(len(n)-1)])

@@ -8,3 +8,6 @@ if not os.path.exists(path):
 
 today = date.today()
 print(str(today))
+
+if '2024-11-05' == str(date.today()):
+    print(True)

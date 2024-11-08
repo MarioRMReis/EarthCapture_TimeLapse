@@ -5,7 +5,7 @@ import math
 import requests
 import argparse
 import numpy as np
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 from pykml import parser
 from utils import geometry, kml_handler
 from satelite import sentinel1, sentinel2
@@ -15,9 +15,9 @@ def get_argparser():
 
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=(date.today() - timedelta(days=31)), 
+    parser.add_argument("--start_date", type=str, default=(str("2022-04-12")), 
                         help="Starting date from witch we are going to start requesting images")
-    parser.add_argument("--end_date", type=str, default=date.today(), 
+    parser.add_argument("--end_date", type=str, default=(str(date.today())), 
                         help="Ending date from witch we are going to start requesting images")
     parser.add_argument("--window_size", type=int, default=128, 
                         help="Size of the square framing the area of interest.")
@@ -30,9 +30,13 @@ def main():
     # Get input arguments
     opts = get_argparser().parse_args()
     
-    numDays = opts.end_date- opts.start_date
-    numImgs = numDays.days
-    opts.numImgs = numImgs
+    # --------------
+    start_date = datetime.strptime(opts.start_date, "%Y-%m-%d")
+    end_date = datetime.strptime(opts.end_date, "%Y-%m-%d")
+    
+    numDays = end_date.date() - start_date.date()
+    opts.numImgs = int(numDays.days)
+    
     # Trigger the authentication flow.
     ee.Authenticate()
     # Initialize the library.
@@ -49,7 +53,6 @@ def main():
     for idx, a in enumerate(aois):
         path = opts.save_folder + '/' + aoi_names[idx] + '/Mask/'
         geometry.get_mask(path, a, size, ["2022-03-12","2022-04-12"])
-
 
     aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
 
@@ -69,16 +72,14 @@ def main():
     #-------------------
     for i, aoi in enumerate(aoi_square):
         for j, channel in enumerate(bands_s1):
-            nnnn = 10
-            #sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, opts, aoi_names)
-            
+            sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, opts, aoi_names)     
 
 
     aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
 
     ffa_s2 = ee.Image(ee.ImageCollection('COPERNICUS/S2_HARMONIZED') 
                         .filterBounds(aoi_bands) 
-                        .first() 
+                        .first()
                         .clip(aoi_bands))
 
     bands_s2 = ffa_s2.bandNames().getInfo()
@@ -98,10 +99,9 @@ def main():
         for j, channel in enumerate(bands_s2):
             if channel == 'B2':
                 incomplete_images = []
-                incomplete_images_B2 =sentinel2.ExportCol_Sentinel2(roi, channel, min, max, i, j, 99, incomplete_images, opts, aoi_names)
-                print("scan")
+                incomplete_images_B2 = sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 98, incomplete_images, opts, aoi_names[i])
             else:
-                sentinel2.ExportCol_Sentinel2(roi, channel, min, max, i, j, 99, incomplete_images_B2, opts, aoi_names)
+                sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 98, incomplete_images_B2, opts, aoi_names)
 
 
 if __name__ == '__main__':
