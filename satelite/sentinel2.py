@@ -44,21 +44,21 @@ def ExportCol_Sentinel2(geometry, roi, channel,  min, max, i, j, percentage, inc
                 # Creates the folder but the flag need to be turned off beacause it will try to makedir after the creation
                 try:
                     os.makedirs(path)
-                    with open(path  + '/' + id + '.tiff', 'wb') as handler:
+                    with open(path  + '/' + id + '.png', 'wb') as handler:
                         handler.write(img_data)
                 except:
                     # This just saves the image in the correct folder with the name 'id' (var->'id')
-                    with open(path  + '/' + id + '.tiff', 'wb') as handler:
+                    with open(path  + '/' + id + '.png', 'wb') as handler:
                         handler.write(img_data)
             else:
 
                 try:
                     os.makedirs(path)
-                    with open(path  + '/' + id + '.tiff', 'wb') as handler:
+                    with open(path  + '/' + id + '.png', 'wb') as handler:
                         handler.write(img_data)
                 except:
                     # This just saves the image in the correct folder with the name 'id' (var->'id')
-                    with open(path  + '/' + id + channel + '.tiff', 'wb') as handler:
+                    with open(path  + '/' + id + channel + '.png', 'wb') as handler:
                         handler.write(img_data)
         except:
             if channel == 'B2':

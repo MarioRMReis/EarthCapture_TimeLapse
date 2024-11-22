@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 from datetime import datetime, date, timedelta
 from pykml import parser
-from utils import geometry, kml_handler
+from utils import geometry, kml_handler, data_verification
 from satelite import sentinel1, sentinel2
 
 def get_argparser():
@@ -15,12 +15,15 @@ def get_argparser():
 
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=(str("2022-04-12")), 
-                        help="Starting date from witch we are going to start requesting images")
+    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=14))), 
+                        help="Format: YYY-MM-DD, \nStarting date from witch we are going to start requesting images")
     parser.add_argument("--end_date", type=str, default=(str(date.today())), 
-                        help="Ending date from witch we are going to start requesting images")
-    parser.add_argument("--window_size", type=int, default=128, 
-                        help="Size of the square framing the area of interest.")
+                        help="Format: YYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
+    parser.add_argument("--window_size", type=int, default=512, 
+                        help="Options: 124, 256, 512, 1024.")
+    parser.add_argument("--satelite", type=int, default=512, 
+                        help="Options: Sentinel-1, Sentinel-2, All. All just contains the available stelites.")
+    
     
     return parser
 
@@ -48,11 +51,11 @@ def main():
     # Sparate all areas of interest, append to the list. Append names to the names list
     aoi_names, aois = kml_handler.kml_reader(kml_files)
     # Get the areas of interst framed and the size of the images that are going to get created
-    aoi_square, size =  geometry.get_squares(aois)
+    aoi_square =  geometry.get_squares(aois, opts.window_size)
     # Save the mask
     for idx, a in enumerate(aois):
         path = opts.save_folder + '/' + aoi_names[idx] + '/Mask/'
-        geometry.get_mask(path, a, size, ["2022-03-12","2022-04-12"])
+        geometry.get_mask(path, a, opts.window_size, ["2022-03-12","2022-04-12"])
 
     aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
 
@@ -69,10 +72,11 @@ def main():
     # Defined values to be the best for these bands
     # intervals - [min[num,num], max[num,num]]
     interval = [[-14, -25], [[-7] * 2]]
-    #-------------------
+    #-----------------------------------------------------------------------------------
     for i, aoi in enumerate(aoi_square):
         for j, channel in enumerate(bands_s1):
-            sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, opts, aoi_names)     
+            sentinel1.ExportCol_Sentinel1(aoi, channel, interval, i, j, opts, aoi_names)
+     
 
 
     aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
@@ -95,14 +99,15 @@ def main():
     max = [2700, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 3200, 2500, 3000]
 
     bands_s2.insert(0,bands_s2.pop(bands_s2.index('B2')))
+
     for i, roi in enumerate(aoi_square):
         for j, channel in enumerate(bands_s2):
             if channel == 'B2':
                 incomplete_images = []
-                incomplete_images_B2 = sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 98, incomplete_images, opts, aoi_names[i])
+                incomplete_images_B2 = sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 99, incomplete_images, opts, aoi_names)
             else:
-                sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 98, incomplete_images_B2, opts, aoi_names)
+                sentinel2.ExportCol_Sentinel2(geometry, roi, channel, min, max, i, j, 99, incomplete_images_B2, opts, aoi_names)
 
 
 if __name__ == '__main__':
-    main()
+    main()  
