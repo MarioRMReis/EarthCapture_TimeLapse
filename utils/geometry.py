@@ -128,12 +128,17 @@ def get_mask(path, aoi, size, timeframe):
         cv2.imwrite(path +'mask.jpg', img_zeros)
 
 
-def Check_image(idx, image, percentage):
-    # B2 - using this band
+def Check_image(idx, image, percentage, size):
+    # Image in cv2
     decoded = cv2.imdecode(np.frombuffer(image, np.uint8), -1)
+    if decoded.shape[:2] == (size, size):
+        size_match = True
+    else:
+        size_match = False
+        
     nonZero_percentage = ((np.count_nonzero(decoded)*100)/decoded.size)
 
-    if nonZero_percentage < percentage:
+    if nonZero_percentage < percentage or size_match == False:
         return idx
     else:
         return
