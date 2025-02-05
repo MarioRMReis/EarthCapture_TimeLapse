@@ -32,7 +32,7 @@ def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_
             img_data = requests.get(url).content
             
             # Check the image
-            if channel == 'B2':
+            if channel == 'RGB':
                 img_skip_idx = geometry.Check_image(i, img_data, percentage, opts.window_size)
                 if img_skip_idx != None:
                     incomplete_images.append(img_skip_idx)
@@ -44,7 +44,7 @@ def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_
 
 
         except:
-            if channel == 'B2':
+            if channel == 'RGB':
                 return incomplete_images
             else:
                 return
