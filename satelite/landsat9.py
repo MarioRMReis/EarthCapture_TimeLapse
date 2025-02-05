@@ -1,8 +1,6 @@
 import ee
 import os
 import requests
-from PIL import Image
-import io
 
 def applyScaleFactors(image):
   opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2)

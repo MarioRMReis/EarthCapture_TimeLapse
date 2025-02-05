@@ -1,6 +1,5 @@
 import ee
 import os
-import cv2
 import requests
 
 def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_names, percentage, incomplete_images):

@@ -2,7 +2,7 @@ import ee
 import os 
 import argparse
 from datetime import datetime, date, timedelta
-from utils import geometry, kml_handler, data_verification
+from utils import geometry, kml_handler
 from satelite import sentinel1, sentinel2, landsat9, landsat8
 
 def get_argparser():
