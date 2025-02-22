@@ -6,6 +6,9 @@ import math
 import pickle
 import requests
 import numpy as np
+from PIL import Image
+from skimage import util
+from super_image import EdsrModel, ImageLoader
 
 # new_aoi() takes the irreguar area of interest and finds the new coords of a square containg the old area
 def new_squareAOI(size_square, aoi):
@@ -39,7 +42,10 @@ def new_squareAOI(size_square, aoi):
     return aoi_new
     
             
-def get_squares(aois, inp_size):
+def get_squares(aois, inp_size, padding_size):
+    # Buffer for the image
+    inp_size = inp_size + (padding_size*2)
+
     if os.path.isfile('utils/coords_dict.pkl'):
         with open('utils/coords_dict.pkl', 'rb') as f:
             coords_dict = pickle.load(f)
@@ -90,7 +96,7 @@ def get_squares(aois, inp_size):
             elif aux == 8:
                 size_square = [size_square[0], size_square[1] + (add_value)]
                 
-
+    
     return aois_square
 
 def get_mask(path, aoi, size, timeframe):
@@ -109,7 +115,7 @@ def get_mask(path, aoi, size, timeframe):
     url = img.getThumbURL({"min":-200000, "max":-200000,"bands":rgb})
 
     img_data = requests.get(url).content
-
+    
     img_aux = cv2.imdecode(np.frombuffer(img_data, np.uint8), -1)
 
     # Create mask ----------------------------------------------------------------
@@ -137,8 +143,7 @@ def Check_image(idx, image, percentage, size):
         size_match = False
         
     nonZero_percentage = ((np.count_nonzero(decoded)*100)/decoded.size)
-
-    if nonZero_percentage < percentage or size_match == False:
+    if nonZero_percentage < percentage or size_match == False or np.any(decoded[:,:,3] == 0):
         return idx
     else:
         return
@@ -158,6 +163,7 @@ def check_imgShape(aoi, size):
 
     img_aux = cv2.imdecode(np.frombuffer(img_data, np.uint8), -1)
     
+
     if img_aux.shape[0] == size and img_aux.shape[1] == size:
         return 0
     elif img_aux.shape[0] > size and img_aux.shape[1] > size:
@@ -175,6 +181,35 @@ def check_imgShape(aoi, size):
     elif img_aux.shape[0] > size and img_aux.shape[1] == size:
         return 7
     elif img_aux.shape[0] < size and img_aux.shape[1] == size:
-        return 8
+        return 8  
     else:
         raise Exception("New case needs implementation.")
+    
+    
+    
+def cut_padding_and_enhance(image_data, ps, opts):
+    # Padding size
+    padding_size = ((ps,ps),(ps,ps),(0,0))
+    # Decode image
+    decoded_image = cv2.imdecode(np.frombuffer(image_data, np.uint8), -1)
+    
+    if opts.super_image:
+        image_pil = Image.fromarray(cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB))
+        scale = math.ceil(opts.window_size/decoded_image.shape[0])
+        if scale > 1:
+            model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=scale)
+            image_input = ImageLoader.load_image(image_pil)
+            image_pil_pred = model(image_input)
+            image_enh = ImageLoader._process_image_to_save(image_pil_pred)
+            cropped_image = util.crop(image_enh, padding_size)
+            cropped_image = cv2.resize(cropped_image, (opts.window_size, opts.window_size))
+            
+    else:     
+        # Crop the image to remove the padding
+        cropped_image = util.crop(decoded_image, padding_size)
+      
+    # Encode the image
+    _, img_encoded = cv2.imencode('.png', cropped_image)
+    encoded_image_bytes = img_encoded.tobytes()
+    
+    return encoded_image_bytes
