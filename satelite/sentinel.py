@@ -5,7 +5,7 @@ from PIL import Image
 from io import BytesIO
 from super_image import EdsrModel, ImageLoader
 
-def ExportCol_Sentinel1(geometry, roi, channel, interval, aoi_num, jdx, opts, aoi_names, percentage, incomplete_images, padding_size):
+def ExportCol_Sentinel1(geometry, roi, channel, interval, aoi_num, jdx, opts, aoi_names, incomplete_images, padding_size):
     aoi_geometry = ee.Geometry.Polygon(roi ,None,False)
     ffa_s = ee.ImageCollection('COPERNICUS/S1_GRD') \
                     .filterBounds(aoi_geometry) \
@@ -41,7 +41,7 @@ def ExportCol_Sentinel1(geometry, roi, channel, interval, aoi_num, jdx, opts, ao
             img_data = geometry.cut_padding_and_enhance(img_data, padding_size, opts)
             
             if channel == 'RGB':
-                img_skip_idx = geometry.Check_image(i, img_data, percentage, opts.window_size)
+                img_skip_idx = geometry.Check_image(i, img_data, opts.window_size)
                 if img_skip_idx != None:
                     incomplete_images.append(img_skip_idx)  
                         
@@ -56,7 +56,7 @@ def ExportCol_Sentinel1(geometry, roi, channel, interval, aoi_num, jdx, opts, ao
                 return
         
 
-def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_names, percentage, incomplete_images, padding_size):
+def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_names, incomplete_images, padding_size):
     aoi_geometry = ee.Geometry.Polygon(roi ,None,False)
     ffa_s = ee.ImageCollection('COPERNICUS/S2_HARMONIZED') \
                     .filterDate(ee.Date(opts.start_date), ee.Date(opts.end_date)) \
@@ -82,11 +82,11 @@ def ExportCol_Sentinel2(geometry, roi, channel, min, max, aoi_num, j, opts, aoi_
 
             id = img.id().getInfo()
             img_data = requests.get(url).content
-            img_data = geometry.cut_padding_and_enhance(img_data, padding_size)
+            img_data = geometry.cut_padding_and_enhance(img_data, padding_size, opts)
             
             # Check the image
             if channel == 'RGB':
-                img_skip_idx = geometry.Check_image(i, img_data, percentage, opts.window_size)
+                img_skip_idx = geometry.Check_image(i, img_data, opts.window_size)
                 if img_skip_idx != None:
                     incomplete_images.append(i)
 

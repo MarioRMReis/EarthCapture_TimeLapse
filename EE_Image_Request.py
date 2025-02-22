@@ -21,8 +21,8 @@ def get_argparser():
                         help="Format: YYYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
     parser.add_argument("--window_size", type=int, default=128, 
                         help="Options: 128, 256, 512, 1024. You can pick any resolution but keep and mind the area of your region, should be greater than 64.")
-    parser.add_argument("--satelite", type=str, default="ALL", 
-                        help="Options: Sentinel -> [Sentinel-1, Sentinel-2], Landsat -> [Landsat-8, Landsat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
+    parser.add_argument("--satelites", type=str, default="Sentinel-2, LANDSAT", 
+                        help="Options: SENTINEL, [Sentinel-1, Sentinel-2], LANDSAT, [Landsat-8, Landsat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
     parser.add_argument("--enable_mask", type=bool, default=True,
                         help="Enable mask creation.")
     parser.add_argument("--super_image", type=bool, default=True, 
@@ -45,10 +45,6 @@ def main():
     # Initialize the library.
     ee.Initialize()
 
-    # ----------------------- List of all opted satelites
-    aux_sSatelites = opts.satelite.replace(" ", "")
-    selectedSatelites = aux_sSatelites.split(',')
-    
     # ----------------------- Takes the KML file creates a frame with the chosen window_size and saves a mask of the area.
     # File containing the areas of interest
     kml_files = os.listdir('roi')
@@ -67,7 +63,7 @@ def main():
             geometry.get_mask(path, a, opts.window_size, ["2022-03-12","2022-04-12"])
 
     # ================== Sentinel-1 ============================================
-    if "Sentinel-1" in selectedSatelites or "SENTINEL" in selectedSatelites or "ALL" in selectedSatelites:
+    if "Sentinel-1" in opts.satelites or "SENTINEL" in opts.satelites or "ALL" in opts.satelites:
         # -------------------------  Retrives the availabe bands from Sentinel-1
         aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
         ffa_db = ee.Image(ee.ImageCollection('COPERNICUS/S1_GRD') 
@@ -87,12 +83,12 @@ def main():
             for j_ch, channel in enumerate(bands_s1):
                 if channel == "RGB":
                     incomplete_images_S1 = []    
-                    incomplete_images_RGB = sentinel.ExportCol_Sentinel1(geometry, aoi, channel, interval, i_aoi, j_ch, opts, aoi_names, 90, incomplete_images_S1, padding_size)
+                    incomplete_images_RGB = sentinel.ExportCol_Sentinel1(geometry, aoi, channel, interval, i_aoi, j_ch, opts, aoi_names, incomplete_images_S1, padding_size)
                 else:
-                    sentinel.ExportCol_Sentinel1(geometry, aoi, channel, interval, i_aoi, j_ch, opts, aoi_names, 90, incomplete_images_RGB, padding_size)
+                    sentinel.ExportCol_Sentinel1(geometry, aoi, channel, interval, i_aoi, j_ch, opts, aoi_names, incomplete_images_RGB, padding_size)
 
     # ================== Sentinel-2 ============================================
-    if  'Sentinel-2' in selectedSatelites or "SENTINEL" in selectedSatelites or "ALL" in selectedSatelites:
+    if  'Sentinel-2' in opts.satelites or "SENTINEL" in opts.satelites or "ALL" in opts.satelites:
         # -------------------------  Retrives the availabe bands from Sentinel-2
         aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
         ffa_s2 = ee.Image(ee.ImageCollection('COPERNICUS/S2_HARMONIZED') 
@@ -115,12 +111,12 @@ def main():
             for j_ch, channel in enumerate(bands_s2):
                 if channel == 'RGB':
                     incomplete_images_S2 = []
-                    incomplete_images_B2 = sentinel.ExportCol_Sentinel2(geometry, roi, channel, min, max, i_aoi, j_ch, opts, aoi_names, 90, incomplete_images_S2, padding_size)
+                    incomplete_images_B2 = sentinel.ExportCol_Sentinel2(geometry, roi, channel, min, max, i_aoi, j_ch, opts, aoi_names, incomplete_images_S2, padding_size)
                 else:
-                    sentinel.ExportCol_Sentinel2(geometry, roi, channel, min, max, i_aoi, j_ch, opts, aoi_names, 90, incomplete_images_B2, padding_size)
+                    sentinel.ExportCol_Sentinel2(geometry, roi, channel, min, max, i_aoi, j_ch, opts, aoi_names, incomplete_images_B2, padding_size)
 
     # ================== Landsat-8 ==============================================
-    if 'Landsat-8' in selectedSatelites or 'LANDSAT' in selectedSatelites or "ALL" in selectedSatelites:
+    if 'Landsat-8' in opts.satelites or 'LANDSAT' in opts.satelites or "ALL" in opts.satelites:
         # -------------------------  Retrives the availabe bands from Landsat-8
         aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
         ffa_db = ee.Image(ee.ImageCollection('LANDSAT/LC08/C02/T1_L2') 
@@ -141,7 +137,7 @@ def main():
                 landsat.ExportCol_landsat8(geometry, aoi, channel, min, max, i_aoi, j_ch, opts, aoi_names, padding_size)       
 
     # ================== Landsat-9 ==============================================                   
-    if 'Landsat-9' in selectedSatelites or 'LANDSAT' in selectedSatelites or "ALL" in selectedSatelites:
+    if 'Landsat-9' in opts.satelites or 'LANDSAT' in opts.satelites or "ALL" in opts.satelites:
         # -------------------------  Retrives the availabe bands from Landsat-9
         aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
         ffa_db = ee.Image(ee.ImageCollection('LANDSAT/LC09/C02/T1_L2') 

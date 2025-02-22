@@ -134,7 +134,7 @@ def get_mask(path, aoi, size, timeframe):
         cv2.imwrite(path +'mask.jpg', img_zeros)
 
 
-def Check_image(idx, image, percentage, size):
+def Check_image(idx, image, size):
     # Image in cv2
     decoded = cv2.imdecode(np.frombuffer(image, np.uint8), -1)
     if decoded.shape[:2] == (size, size):
@@ -142,8 +142,7 @@ def Check_image(idx, image, percentage, size):
     else:
         size_match = False
         
-    nonZero_percentage = ((np.count_nonzero(decoded)*100)/decoded.size)
-    if nonZero_percentage < percentage or size_match == False or np.any(decoded[:,:,3] == 0):
+    if size_match == False or np.any(decoded[:,:,3] == 0):
         return idx
     else:
         return
@@ -196,6 +195,8 @@ def cut_padding_and_enhance(image_data, ps, opts):
     if opts.super_image:
         image_pil = Image.fromarray(cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB))
         scale = math.ceil(opts.window_size/decoded_image.shape[0])
+        if scale > 4:
+            scale = 4
         if scale > 1:
             model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=scale)
             image_input = ImageLoader.load_image(image_pil)
@@ -203,7 +204,9 @@ def cut_padding_and_enhance(image_data, ps, opts):
             image_enh = ImageLoader._process_image_to_save(image_pil_pred)
             cropped_image = util.crop(image_enh, padding_size)
             cropped_image = cv2.resize(cropped_image, (opts.window_size, opts.window_size))
-            
+        else:
+            # Crop the image to remove the padding
+            cropped_image = util.crop(decoded_image, padding_size)
     else:     
         # Crop the image to remove the padding
         cropped_image = util.crop(decoded_image, padding_size)
