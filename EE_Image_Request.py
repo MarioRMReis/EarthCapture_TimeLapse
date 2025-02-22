@@ -12,7 +12,7 @@ from satelite import landsat, sentinel
 
 def get_argparser():
     parser = argparse.ArgumentParser()
-
+    
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
     parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=64))), 
