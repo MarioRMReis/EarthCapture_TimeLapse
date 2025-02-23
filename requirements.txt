@@ -1,6 +1,6 @@
 # first apt install python3-tk
 earthengine-api==0.1.274
-requests==2.31.0
+requests==2.32.0
 numpy==1.24.2
 opencv-python-headless==4.8.1.78
 Pillow==11.0.0
