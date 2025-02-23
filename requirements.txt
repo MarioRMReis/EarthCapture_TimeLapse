@@ -3,7 +3,7 @@ earthengine-api==0.1.274
 requests==2.31.0
 numpy==1.24.2
 opencv-python-headless==4.5.5.64
-Pillow==9.4.0
+Pillow==10.3.0
 scikit-image==0.19.3
 super-image==0.1.0
 torch>=1.7.0
