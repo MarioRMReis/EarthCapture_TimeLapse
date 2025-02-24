@@ -1,8 +1,14 @@
 # first apt install python3-tk
-pykml
-fastkml
-geopandas
-fiona
-ogr
-fastkml
-geemap
+earthengine-api==0.1.274
+requests==2.32.0
+numpy==1.24.2
+opencv-python-headless==4.8.1.78
+Pillow==11.0.0
+scikit-image==0.19.3
+super-image==0.1.0
+torch>=1.7.0
+torchvision>=0.8.0
+transformers>=4.0.0
+argparse==1.4.0
+pykml==0.2.0
+huggingface-hub==0.25.0
