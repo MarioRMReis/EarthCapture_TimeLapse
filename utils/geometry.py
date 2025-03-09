@@ -186,28 +186,29 @@ def check_imgShape(aoi, size):
     
     
     
-def cut_padding_and_enhance(image_data, ps, opts):
+def cut_padding_and_enhance(image_data, opts):
     # Padding size
-    padding_size = ((ps,ps),(ps,ps),(0,0))
+    padding_size = ((opts.padding_size,opts.padding_size),(opts.padding_size,opts.padding_size),(0,0))
     # Decode image
     decoded_image = cv2.imdecode(np.frombuffer(image_data, np.uint8), -1)
-    
+    # Set scale to 1
+    scale = 1
     if opts.super_image:
         image_pil = Image.fromarray(cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB))
         scale = math.ceil(opts.window_size/decoded_image.shape[0])
-        if scale > 4:
-            scale = 4
+        scale = min(scale, 4)
+        
+        # Enhance the image, and resize if needed
         if scale > 1:
             model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=scale)
             image_input = ImageLoader.load_image(image_pil)
-            image_pil_pred = model(image_input)
-            image_enh = ImageLoader._process_image_to_save(image_pil_pred)
+            pil_image_pred = model(image_input)
+            image_enh = ImageLoader._process_image_to_save(pil_image_pred)
             cropped_image = util.crop(image_enh, padding_size)
             cropped_image = cv2.resize(cropped_image, (opts.window_size, opts.window_size))
-        else:
-            # Crop the image to remove the padding
-            cropped_image = util.crop(decoded_image, padding_size)
-    else:     
+    
+    # Remove padding if scale is 1, if greater than 1 the image is already cropped
+    if scale == 1:     
         # Crop the image to remove the padding
         cropped_image = util.crop(decoded_image, padding_size)
       

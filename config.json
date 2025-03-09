@@ -1,0 +1,598 @@
+{
+   "Sentinel-1": {
+      "all_bands_info": [
+         "VV",
+         "VH",
+         "angle"
+      ],
+      "resolution": {
+         "VV": 10,
+         "VH": 10,
+         "angle": 10
+      },
+      "add_bands": [
+         "RGB"
+      ],
+      "skip_bands": [
+         "angle"
+      ],
+      "band_combinations": {
+         "RGB": [
+            "VV",
+            "VH",
+            "VV/VH"
+         ]
+      },
+      "min_max_values": {
+         "VV": [
+            -15.274805789065608,
+            -5.635304299595082
+         ],
+         "VH": [
+            -21.492237743792728,
+            -10.506313640565725
+         ],
+         "angle": [
+            34.65285110473633,
+            34.71831130981445
+         ],
+         "VV/VH": [
+            0,
+            2
+         ]
+      }
+   },
+   "Sentinel-2": {
+      "resolution": {
+         "B1": 60,
+         "B2": 10,
+         "B3": 10,
+         "B4": 10,
+         "B5": 20,
+         "B6": 20,
+         "B7": 20,
+         "B8": 10,
+         "B8A": 20,
+         "B9": 60,
+         "B10": 60,
+         "B11": 20,
+         "B12": 20
+      },
+      "all_bands_info": [
+         "B1",
+         "B2",
+         "B3",
+         "B4",
+         "B5",
+         "B6",
+         "B7",
+         "B8",
+         "B8A",
+         "B9",
+         "B10",
+         "B11",
+         "B12",
+         "QA10",
+         "QA20",
+         "QA60",
+         "MSK_CLASSI_OPAQUE",
+         "MSK_CLASSI_CIRRUS",
+         "MSK_CLASSI_SNOW_ICE"
+      ],
+      "band_combinations": {
+         "RGB": [
+            "B4",
+            "B3",
+            "B2"
+         ],
+         "SNIR1NB": [
+            "B11",
+            "B8",
+            "B2"
+         ],
+         "CIR": [
+            "B8",
+            "B4",
+            "B3"
+         ],
+         "SWIR21R": [
+            "B12",
+            "B11",
+            "B4"
+         ],
+         "SWIR21B": [
+            "B12",
+            "B11",
+            "B2"
+         ],
+         "RGA": [
+            "B4",
+            "B3",
+            "B1"
+         ]
+      },
+      "add_bands": [
+         "CIR"
+      ],
+      "skip_bands": [
+         "B2",
+         "B3",
+         "B4",
+         "QA10",
+         "QA20",
+         "QA60",
+         "B10",
+         "MSK_CLASSI_CIRRUS",
+         "MSK_CLASSI_OPAQUE",
+         "MSK_CLASSI_SNOW_ICE"
+      ],
+      "min_max_values": {
+         "B1": [
+            1091,
+            1361
+         ],
+         "B2": [
+            819,
+            1250
+         ],
+         "B3": [
+            697,
+            1255
+         ],
+         "B4": [
+            416,
+            1336
+         ],
+         "B5": [
+            587,
+            1555
+         ],
+         "B6": [
+            2058,
+            3574
+         ],
+         "B7": [
+            2611,
+            4340
+         ],
+         "B8": [
+            2531,
+            4206
+         ],
+         "B8A": [
+            2776,
+            4635
+         ],
+         "B9": [
+            584,
+            989
+         ],
+         "B10": [
+            6,
+            11
+         ],
+         "B11": [
+            1062,
+            2714
+         ],
+         "B12": [
+            397,
+            1830
+         ],
+         "QA10": [
+            0,
+            0
+         ],
+         "QA20": [
+            0,
+            0
+         ],
+         "QA60": [
+            0,
+            0
+         ],
+         "MSK_CLASSI_OPAQUE": [
+            null,
+            null
+         ],
+         "MSK_CLASSI_CIRRUS": [
+            null,
+            null
+         ],
+         "MSK_CLASSI_SNOW_ICE": [
+            null,
+            null
+         ]
+      }
+   },
+   "LandSat-8": {
+      "resolution": {
+         "SR_B1": 30,
+         "SR_B2": 30,
+         "SR_B3": 30,
+         "SR_B4": 30,
+         "SR_B5": 30,
+         "SR_B6": 30,
+         "SR_B7": 30,
+         "SR_QA_AEROSOL": 0,
+         "ST_B10": 0,
+         "ST_ATRAN": 0,
+         "ST_CDIST": 0,
+         "ST_DRAD": 0,
+         "ST_EMIS": 0,
+         "ST_EMSD": 0,
+         "ST_QA": 0,
+         "ST_TRAD": 0,
+         "ST_URAD": 0,
+         "QA_PIXEL": 0,
+         "QA_RADSAT": 0
+      },
+      "all_bands_info": [
+         "SR_B1",
+         "SR_B2",
+         "SR_B3",
+         "SR_B4",
+         "SR_B5",
+         "SR_B6",
+         "SR_B7",
+         "SR_QA_AEROSOL",
+         "ST_B10",
+         "ST_ATRAN",
+         "ST_CDIST",
+         "ST_DRAD",
+         "ST_EMIS",
+         "ST_EMSD",
+         "ST_QA",
+         "ST_TRAD",
+         "ST_URAD",
+         "QA_PIXEL",
+         "QA_RADSAT"
+      ],
+      "band_combinations": {
+         "RGB": [
+            "SR_B4",
+            "SR_B3",
+            "SR_B2"
+         ],
+         "SWIR21R": [
+            "SR_B7",
+            "SR_B6",
+            "SR_B4"
+         ],
+         "NRG": [
+            "SR_B5",
+            "SR_B4",
+            "SR_B3"
+         ],
+         "SWIR1NB": [
+            "SR_B6",
+            "SR_B5",
+            "SR_B2"
+         ],
+         "SWIR21N": [
+            "SR_B7",
+            "SR_B6",
+            "SR_B5"
+         ],
+         "NSWIRB": [
+            "SR_B5",
+            "SR_B6",
+            "SR_B2"
+         ],
+         "NSWIRR": [
+            "SR_B5",
+            "SR_B6",
+            "SR_B4"
+         ],
+         "SWIR2NG": [
+            "SR_B7",
+            "SR_B5",
+            "SR_B3"
+         ],
+         "SWIR2NR": [
+            "SR_B7",
+            "SR_B5",
+            "SR_B4"
+         ],
+         "SWIRN1R": [
+            "SR_B6",
+            "SR_B5",
+            "SR_B4"
+         ]
+      },
+      "add_bands": [
+         "RGB",
+         "SWIR21R"
+      ],
+      "skip_bands": [
+         "SR_B2",
+         "SR_B3",
+         "SR_B4",
+         "SR_QA_AEROSOL",
+         "ST_B10",
+         "ST_ATRAN",
+         "ST_CDIST",
+         "ST_DRAD",
+         "ST_EMIS",
+         "ST_EMSD",
+         "ST_QA",
+         "ST_TRAD",
+         "ST_URAD",
+         "QA_PIXEL",
+         "QA_RADSAT"
+      ],
+      "min_max_values": {
+         "SR_B1": [
+            0.021450000000000025,
+            0.39242
+         ],
+         "SR_B2": [
+            0.027110000000000023,
+            0.39853
+         ],
+         "SR_B3": [
+            0.022639999999999993,
+            0.3926
+         ],
+         "SR_B4": [
+            0.027349999999999985,
+            0.39874
+         ],
+         "SR_B5": [
+            0.03792000000000001,
+            0.40311
+         ],
+         "SR_B6": [
+            -0.03203,
+            0.32
+         ],
+         "SR_B7": [
+            -0.07912,
+            0.26438
+         ],
+         "SR_QA_AEROSOL": [
+            -0.29808,
+            0.00224
+         ],
+         "ST_B10": [
+            0.09317000000000003,
+            0.39678
+         ],
+         "ST_ATRAN": [
+            -0.21411999999999998,
+            0.08589
+         ],
+         "ST_CDIST": [
+            -0.3,
+            0.0
+         ],
+         "ST_DRAD": [
+            -0.29457,
+            0.00543
+         ],
+         "ST_EMIS": [
+            -0.2041,
+            0.09787
+         ],
+         "ST_EMSD": [
+            -0.29945,
+            0.00183
+         ],
+         "ST_QA": [
+            -0.29388,
+            0.00619
+         ],
+         "ST_TRAD": [
+            -0.22726999999999997,
+            0.07304
+         ],
+         "ST_URAD": [
+            -0.28957,
+            0.01044
+         ],
+         "QA_PIXEL": [
+            -0.07719999999999999,
+            0.2228
+         ],
+         "QA_RADSAT": [
+            -0.3,
+            0.0
+         ]
+      }
+   },
+   "LandSat-9": {
+      "resolution": {
+         "SR_B1": 30,
+         "SR_B2": 30,
+         "SR_B3": 30,
+         "SR_B4": 30,
+         "SR_B5": 30,
+         "SR_B6": 30,
+         "SR_B7": 30,
+         "SR_QA_AEROSOL": 0,
+         "ST_B10": 0,
+         "ST_ATRAN": 0,
+         "ST_CDIST": 0,
+         "ST_DRAD": 0,
+         "ST_EMIS": 0,
+         "ST_EMSD": 0,
+         "ST_QA": 0,
+         "ST_TRAD": 0,
+         "ST_URAD": 0,
+         "QA_PIXEL": 0,
+         "QA_RADSAT": 0
+      },
+      "all_bands": [
+         "SR_B1",
+         "SR_B2",
+         "SR_B3",
+         "SR_B4",
+         "SR_B5",
+         "SR_B6",
+         "SR_B7",
+         "SR_QA_AEROSOL",
+         "ST_B10",
+         "ST_ATRAN",
+         "ST_CDIST",
+         "ST_DRAD",
+         "ST_EMIS",
+         "ST_EMSD",
+         "ST_QA",
+         "ST_TRAD",
+         "ST_URAD",
+         "QA_PIXEL",
+         "QA_RADSAT"
+      ],
+      "band_combinations": {
+         "RGB": [
+            "SR_B4",
+            "SR_B3",
+            "SR_B2"
+         ],
+         "SWIR21R": [
+            "SR_B7",
+            "SR_B6",
+            "SR_B4"
+         ],
+         "NRG": [
+            "SR_B5",
+            "SR_B4",
+            "SR_B3"
+         ],
+         "SWIR1NB": [
+            "SR_B6",
+            "SR_B5",
+            "SR_B2"
+         ],
+         "SWIR21N": [
+            "SR_B7",
+            "SR_B6",
+            "SR_B5"
+         ],
+         "NSWIRB": [
+            "SR_B5",
+            "SR_B6",
+            "SR_B2"
+         ],
+         "NSWIRR": [
+            "SR_B5",
+            "SR_B6",
+            "SR_B4"
+         ],
+         "SWIR2NG": [
+            "SR_B7",
+            "SR_B5",
+            "SR_B3"
+         ],
+         "SWIR2NR": [
+            "SR_B7",
+            "SR_B5",
+            "SR_B4"
+         ],
+         "SWIRN1R": [
+            "SR_B6",
+            "SR_B5",
+            "SR_B4"
+         ]
+      },
+      "add_bands": [
+         "RGB",
+         "SWIR21R"
+      ],
+      "skip_bands": [
+         "SR_B2",
+         "SR_B3",
+         "SR_B4",
+         "SR_QA_AEROSOL",
+         "ST_B10",
+         "ST_ATRAN",
+         "ST_CDIST",
+         "ST_DRAD",
+         "ST_EMIS",
+         "ST_EMSD",
+         "ST_QA",
+         "ST_TRAD",
+         "ST_URAD",
+         "QA_PIXEL",
+         "QA_RADSAT"
+      ],
+      "min_max_values": {
+         "SR_B1": [
+            -0.25506,
+            0.21822
+         ],
+         "SR_B2": [
+            -0.25394,
+            0.22708
+         ],
+         "SR_B3": [
+            -0.23132999999999998,
+            0.23411
+         ],
+         "SR_B4": [
+            -0.22407,
+            0.24269
+         ],
+         "SR_B5": [
+            -0.18007,
+            0.28716
+         ],
+         "SR_B6": [
+            -0.17515999999999998,
+            0.22412
+         ],
+         "SR_B7": [
+            -0.19088,
+            0.18346
+         ],
+         "SR_QA_AEROSOL": [
+            -0.29936,
+            0.00224
+         ],
+         "ST_B10": [
+            0.09547,
+            0.40169
+         ],
+         "ST_ATRAN": [
+            -0.22688999999999998,
+            0.07312
+         ],
+         "ST_CDIST": [
+            -0.3,
+            0.0
+         ],
+         "ST_DRAD": [
+            -0.29112,
+            0.00889
+         ],
+         "ST_EMIS": [
+            -0.20409,
+            0.09797
+         ],
+         "ST_EMSD": [
+            -0.29945,
+            0.00183
+         ],
+         "ST_QA": [
+            -0.29359999999999997,
+            0.00647
+         ],
+         "ST_TRAD": [
+            -0.22737999999999997,
+            0.07384
+         ],
+         "ST_URAD": [
+            -0.28131,
+            0.0187
+         ],
+         "QA_PIXEL": [
+            -0.07719999999999999,
+            0.24082
+         ],
+         "QA_RADSAT": [
+            -0.3,
+            0.0
+         ]
+      }
+   }
+}

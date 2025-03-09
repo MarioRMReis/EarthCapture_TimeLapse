@@ -1,5 +1,4 @@
-import ee
-from datetime import date, timedelta, datetime
+from datetime import  datetime
 
 
 def check_opts(opts):
@@ -28,7 +27,6 @@ def check_opts(opts):
     if opts.window_size < 64 and not isinstance(opts.window_size, int):
         errors.append(f"window_size should be a number greater than 64. Got: {opts.window_size}")
 
-
     # List of all opted satelites
     if not isinstance(opts.satelites, str):
         errors.append(f"satelites should be a non-empty string.")
@@ -36,8 +34,8 @@ def check_opts(opts):
         aux_sSatelites = opts.satelites.replace(" ", "")
         opts.satelites = aux_sSatelites.split(',')
     # Check if satelite is a non-empty string
-    if not set(opts.satelites).issubset(set(['SENTINEL','Sentinel-1','Sentinel-2', 'LANDSAT','Landsat-8','Landsat-9', 'ALL'])):
-        errors.append(f"satelites should be one or more of ['Sentinel','Sentinel-1','Sentinel-2', 'Landsat','Landsat-8','Landsat-9', 'ALL'], the ones in caps-lock pick more than 1 satelite. Got: {opts.satelites}")
+    if not set(opts.satelites).issubset(set(['SENTINEL','Sentinel-1','Sentinel-2', 'LANDSAT','LandSat-8','LandSat-9', 'ALL'])):
+        errors.append(f"satelites should be one or more of ['SENTINEL','Sentinel-1','Sentinel-2', 'LANDSAT','LandSat-8','LandSat-9', 'ALL'], the ones in caps-lock pick more than 1 satelite. Got: {opts.satelites}")
 
     # Check if enable_mask is a boolean
     if not isinstance(opts.enable_mask, bool):
