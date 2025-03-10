@@ -1,9 +1,35 @@
 import ee
 import os
 import requests
-from utils import config_handler, geometry
+from utils import config_handler, geometry, helper
 
-def ExportCol_Sentinel1(aoi, band_num, band, opts, aoi_name, incomplete_images):
+# !____________________________________________SENTINEL-1____________________________________________
+def process_sentinel1(config, opts, aoi_names, aois, aoi_square):
+    # Retrives the available bands from Sentinel-1
+    aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
+    ffa_db = ee.Image(ee.ImageCollection('COPERNICUS/S1_GRD') 
+                        .filterBounds(aoi_bands)
+                        .first() 
+                        .clip(aoi_bands))
+    # Variables needed to save images
+    bands_s1 = ffa_db.bandNames().getInfo()
+    
+    if opts.min_max_values:
+        # Compute min and max values for each band
+        helper.get_min_max(config, "Sentinel-1", image=ffa_db, bands=bands_s1)
+    
+    bands_info = config_handler.get_config_param(config, bands_s1, 'Sentinel-1')
+    
+    # Image request
+    for aoi_num, aoi in enumerate(aoi_square):
+        for band_num, band in enumerate(bands_info):
+            if band_num == 0:
+                incomplete_images_empty = []    
+                incomplete_images_list = image_request_Sentinel1(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_empty)
+            else:
+                incomplete_images_list = image_request_Sentinel1(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_list)
+
+def image_request_Sentinel1(aoi, band_num, band, opts, aoi_name, incomplete_images):
     aoi_geometry = ee.Geometry.Polygon(aoi ,None,False)
     ffa_s = ee.ImageCollection('COPERNICUS/S1_GRD') \
                     .filterBounds(aoi_geometry) \
@@ -39,9 +65,33 @@ def ExportCol_Sentinel1(aoi, band_num, band, opts, aoi_name, incomplete_images):
                 handler.write(img_data)
                 
     return incomplete_images
-        
 
-def ExportCol_Sentinel2(aoi, band_num, band, opts, aoi_name, incomplete_images):
+# !____________________________________________SENTINEL-2____________________________________________
+def process_sentinel2(config, opts, aoi_names, aois, aoi_square):
+    # Retrives the available bands from Sentinel-2
+    aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
+    ffa_db = ee.Image(ee.ImageCollection('COPERNICUS/S2_HARMONIZED') 
+                        .filterBounds(aoi_bands) 
+                        .first()
+                        .clip(aoi_bands))
+    bands_s2 = ffa_db.bandNames().getInfo()
+    
+    if opts.min_max_values:
+        # Compute min and max values for each band
+        helper.get_min_max(config, "Sentinel-2", image=ffa_db, bands=bands_s2)
+                
+    bands_info = config_handler.get_config_param(config, bands_s2, 'Sentinel-2')
+    
+    # Image request
+    for aoi_num, aoi in enumerate(aoi_square):
+        for band_num, band in enumerate(bands_info):
+            if band_num == 0:
+                incomplete_images_empty = []
+                incomplete_images_list = image_request_Sentinel2(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_empty)
+            else:
+                incomplete_images_list = image_request_Sentinel2(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_list)        
+
+def image_request_Sentinel2(aoi, band_num, band, opts, aoi_name, incomplete_images):
     # From the aoi given, get all images(colList) in the colection and the amout (colec_size)
     aoi_geometry = ee.Geometry.Polygon(aoi ,None,False)
     ffa_s = ee.ImageCollection('COPERNICUS/S2_HARMONIZED') \

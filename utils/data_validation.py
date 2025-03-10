@@ -32,10 +32,10 @@ def check_opts(opts):
         errors.append(f"satelites should be a non-empty string.")
     else:
         aux_sSatelites = opts.satelites.replace(" ", "")
-        opts.satelites = aux_sSatelites.split(',')
+        opts.satelites = [satelite.lower() for satelite in aux_sSatelites.split(',')]
     # Check if satelite is a non-empty string
-    if not set(opts.satelites).issubset(set(['SENTINEL','Sentinel-1','Sentinel-2', 'LANDSAT','LandSat-8','LandSat-9', 'ALL'])):
-        errors.append(f"satelites should be one or more of ['SENTINEL','Sentinel-1','Sentinel-2', 'LANDSAT','LandSat-8','LandSat-9', 'ALL'], the ones in caps-lock pick more than 1 satelite. Got: {opts.satelites}")
+    if not set(opts.satelites).issubset(set(['sentinel','sentinel-1','sentinel-2', 'landsat','landsat-8','Landsat-9', 'all'])):
+        errors.append(f"satelites should be one or more of ['sentinel','sentinel-1','sentinel-2', 'landsat','landsat-8','LandSat-9', 'all'], the ones in caps-lock pick more than 1 satelite. Got: {opts.satelites}")
 
     # Check if enable_mask is a boolean
     if not isinstance(opts.enable_mask, bool):

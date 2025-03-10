@@ -1,0 +1,16 @@
+To do:
+Band combinations with diferent resolutions (super_image)
+Vegetation index (NDVI)
+Window spliting in case of roi not fiting the desired window.
+____________________________________________________________
+|                _____________|___________                  |
+|               (             |           )                 |
+|             (               |            )                |
+|              (              |           )                 |
+|               (_____________|__________)                  |
+|                             |                             |
+|                             |                             |
+|                             |                             |
+______________________________|______________________________
+            Image 1                     Image 2
+Better comments

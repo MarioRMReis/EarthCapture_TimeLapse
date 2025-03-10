@@ -22,15 +22,15 @@ def get_argparser():
                         help="Format: YYYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
     parser.add_argument("--window_size", type=int, default=128, 
                         help="Options: 128, 256, 512, 1024. You can pick any resolution but keep and mind the area of your region, should be greater than 64.")
-    parser.add_argument("--satelites", type=str, default="LANDSAT", 
+    parser.add_argument("--satelites", type=str, default="LANDSAT, Sentinel-2", 
                         help="Options: SENTINEL, [Sentinel-1, Sentinel-2], LANDSAT, [LandSat-8, LandSat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
     parser.add_argument("--enable_mask", type=bool, default=True,
                         help="Enable mask creation.")
     parser.add_argument("--super_image", type=bool, default=True, 
                         help="Enable super-image creation. Since different sensores output different image sizes this is a option to make the images all the same size.")
-    parser.add_argument("--max_cloud_coverage", type=int, default=20, 
+    parser.add_argument("--max_cloud_coverage", type=int, default=10, 
                         help="Must be a number between 0 and 100.")
-    parser.add_argument("--padding_size", type=int, default=4,
+    parser.add_argument("--padding_size", type=int, default=8,
                         help="This will determine the size of the padding used in the fetched request. Padding size, used to get sharper edgeds on the image. If the image request is the same size as the intended the image is blurry at the edges.")
     parser.add_argument("--min_max_values", type=bool, default=True,
                         help="Changes the min_max values of the configuration file to the ones provided by the Reducer.minMax() function.")
@@ -54,112 +54,37 @@ def main():
     
     # Initialize the library.
     ee.Initialize(credentials)
-    
-    # ----------------------- Takes the KML file creates a frame with the chosen window_size and saves a mask of the area.
-    # File containing the areas of interest
+
+    # Get all the kml files in the folder
     kml_files = os.listdir('roi')
+    
     # Sparate all areas of interest, append to the list. Append names to the names list
+    # Takes all the areas of interest and are named afeter the kml file
     aoi_names, aois = config_handler.kml_reader(kml_files)
     
-    # Get the areas of interst framed and the size of the images that are going to get created
+    # With the chosen window from the user, get the squares that will be used to fetch the images
     aoi_square =  geometry.get_squares(aois, opts.window_size, opts.padding_size)
+    
+    # If the user wants to create a mask, this will create a mask where white is the region of interest, image size is the same as the window size
     if opts.enable_mask:
         # Save the mask
         for idx, a in enumerate(aois):
             path = opts.save_folder + '/' + aoi_names[idx] + '/Mask/'
             geometry.get_mask(path, a, opts.window_size, ["2022-03-12","2022-04-12"])
 
-    # ============================================================== Sentinel-1 ============================================
-    if "Sentinel-1" in opts.satelites or "SENTINEL" in opts.satelites or "ALL" in opts.satelites:
-        # -------------------------  Retrives the availabe bands from Sentinel-1
-        aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
-        ffa_db = ee.Image(ee.ImageCollection('COPERNICUS/S1_GRD') 
-                            .filterBounds(aoi_bands)
-                            .first() 
-                            .clip(aoi_bands))
-        # Variables needed to save images
-        bands_s1 = ffa_db.bandNames().getInfo()
-        
-        if opts.min_max_values:
-            # Compute min and max values for each band
-            helper.get_min_max(config, "Sentinel-1", image=ffa_db, bands=bands_s1)
-        
-        bands_info = config_handler.get_config_param(config, bands_s1, 'Sentinel-1')
-        
-        
-        for aoi_num, aoi in enumerate(aoi_square):
-            for band_num, band in enumerate(bands_info):
-                if band_num == 0:
-                    incomplete_images_empty = []    
-                    incomplete_images_list = sentinel.ExportCol_Sentinel1(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_empty)
-                else:
-                    incomplete_images_list = sentinel.ExportCol_Sentinel1(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_list)
+    # Get the satelites selected by the user
+    sat_list = helper.get_satelites(opts.satelites)
 
-    # ============================================================== Sentinel-2 ============================================
-    if  'Sentinel-2' in opts.satelites or "SENTINEL" in opts.satelites or "ALL" in opts.satelites:
-        # -------------------------  Retrives the availabe bands from Sentinel-2
-        aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
-        ffa_db = ee.Image(ee.ImageCollection('COPERNICUS/S2_HARMONIZED') 
-                            .filterBounds(aoi_bands) 
-                            .first()
-                            .clip(aoi_bands))
-        bands_s2 = ffa_db.bandNames().getInfo()
-        
-        if opts.min_max_values:
-            # Compute min and max values for each band
-            helper.get_min_max(config, "Sentinel-2", image=ffa_db, bands=bands_s2)
-                   
-        bands_info = config_handler.get_config_param(config, bands_s2, 'Sentinel-2')
-        
-        # Image request
-        for aoi_num, aoi in enumerate(aoi_square):
-            for band_num, band in enumerate(bands_info):
-                if band_num == 0:
-                    incomplete_images_empty = []
-                    incomplete_images_list = sentinel.ExportCol_Sentinel2(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_empty)
-                else:
-                    incomplete_images_list = sentinel.ExportCol_Sentinel2(aoi, band_num, band, opts, aoi_names[aoi_num], incomplete_images_list)
-
-    # ============================================================== Landsat-8 ==============================================
-    if 'LandSat-8' in opts.satelites or 'LANDSAT' in opts.satelites or "ALL" in opts.satelites:
-        # -------------------------  Retrives the availabe bands from Landsat-8
-        aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
-        ffa_db = ee.Image(ee.ImageCollection('LANDSAT/LC08/C02/T1_L2') 
-                            .filterBounds(aoi_bands)
-                            .first() 
-                            .clip(aoi_bands))
-        bands_l8 = ffa_db.bandNames().getInfo()
-        
-        if opts.min_max_values:
-            # Compute min and max values for each band
-            helper.get_min_max(config, "LandSat-8", image=ffa_db, bands=bands_l8)
-            
-        bands_info = config_handler.get_config_param(config, bands_l8, 'LandSat-8')
-        
-        for aoi_num, aoi in enumerate(aoi_square):
-            for band_num, band in enumerate(bands_info): 
-                landsat.ExportCol_landsat8(aoi, band, opts, aoi_names[aoi_num])
-
-    # ============================================================== Landsat-9 ==============================================                   
-    if 'LandSat-9' in opts.satelites or 'LANDSAT' in opts.satelites or "ALL" in opts.satelites:
-        # -------------------------  Retrives the availabe bands from Landsat-9
-        aoi_bands = ee.Geometry.Polygon(aois[0],None,False)
-        ffa_db = ee.Image(ee.ImageCollection('LANDSAT/LC09/C02/T1_L2') 
-                            .filterBounds(aoi_bands)
-                            .first() 
-                            .clip(aoi_bands))
-        bands_l9 = ffa_db.bandNames().getInfo()
-        
-        if opts.min_max_values:
-            # Compute min and max values for each band
-            helper.get_min_max(config, "LandSat-9", image=ffa_db, bands=bands_l9)
-            
-        bands_info = config_handler.get_config_param(config, bands_l9, 'LandSat-9')
-        
-        for aoi_num, aoi in enumerate(aoi_square):
-            for band_num, band in enumerate(bands_info): 
-                landsat.ExportCol_landsat9(aoi, band, opts, aoi_names[aoi_num])
-
-        
+    # Process the images for each selected satelite
+    for sat in sat_list:
+        if sat == "sentinel-1":
+            sentinel.process_sentinel1(config, opts, aoi_names, aois, aoi_square)
+        if sat == "sentinel-2":
+            sentinel.process_sentinel2(config, opts, aoi_names, aois, aoi_square)
+        if sat == "landsat-8":
+            landsat.process_landsat8(config, opts, aoi_names, aois, aoi_square)
+        if sat == "landsat-9":
+            landsat.process_landsat9(config, opts, aoi_names, aois, aoi_square)
+    
 if __name__ == '__main__':
     main()  
