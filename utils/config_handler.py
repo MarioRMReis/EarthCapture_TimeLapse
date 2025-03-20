@@ -56,26 +56,39 @@ def load_config(config_path):
         config = json.load(f)
     return config
 
-def get_config_param(config, bands_s2, satellite):
+def get_config_param(config, bands_s2, satellite, min_max_auto=False):
     # Remove the bands that we want to skip
     bands_s2 = [b for b in bands_s2 if b not in config[satellite]['skip_bands']]
     
     # [Name, Band] this will be usefill when band combinations are added, [RGB,["B4","B3","B2"]]
     bands_info = []
     for b in bands_s2:
-        min_max_band = config[satellite]['min_max_values'][b]
-        bands_info.append({"name":b,"bands":b,"min":min_max_band[0],"max":min_max_band[1]})
+        # Pick the user picked or the auto min max values
+        if min_max_auto:
+            min_max_band = config[satellite]['min_max_values_auto'][b]
+        else:
+            min_max_band = config[satellite]['min_max_values_user_defined'][b]
+            
+        res = config[satellite]['resolution'][b]
+        bands_info.append({"name":b,"bands":b,"min":min_max_band[0],"max":min_max_band[1],"resolution":res})
         
     # Get the added band combinations to the list of bands
     for b in config[satellite]['add_bands']: 
         b_comb = config[satellite]['band_combinations'][b]
         min_band = []
         max_band = []
+        resolutions = []
         for b_c in b_comb:
-            min_band.append(config[satellite]['min_max_values'][b_c][0])
-            max_band.append(config[satellite]['min_max_values'][b_c][1])
+            # Pick the user picked or the auto min max values
+            if min_max_auto:
+                min_band.append(config[satellite]['min_max_values_auto'][b_c][0])
+                max_band.append(config[satellite]['min_max_values_auto'][b_c][1])
+            else:
+                min_band.append(config[satellite]['min_max_values_user_defined'][b_c][0])
+                max_band.append(config[satellite]['min_max_values_user_defined'][b_c][1])
+            resolutions.append(config[satellite]["resolution"][b_c])
             
-        bands_info.insert(0, {"name":b,"bands":b_comb,"min":min_band,"max":max_band})
+        bands_info.insert(0, {"name":b,"bands":b_comb,"min":min_band,"max":max_band,"resolution":resolutions})
 
     # Returns a list with [name, [band1, band2], [min_value1, min_value2], [max_value1, max_value2]]
     return bands_info

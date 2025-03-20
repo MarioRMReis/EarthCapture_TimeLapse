@@ -10,7 +10,7 @@ def get_min_max(config, Satelite, image, region=None, scale=30, bands=None):
         reducer=ee.Reducer.minMax(),
         geometry=region if region else image.geometry(),
         scale=scale,
-        maxPixels=1e13
+        bestEffort=True
     )
     
     # Convert results to dictionary
@@ -20,13 +20,14 @@ def get_min_max(config, Satelite, image, region=None, scale=30, bands=None):
         min_max_values = {band: [stats.get(f'{band}_min').getInfo(), stats.get(f'{band}_max').getInfo()] for band in bands}
     if Satelite == "Sentinel-1":
         min_max_values["VV/VH"] = [0, 2]
-    config[Satelite]['min_max_values'] = min_max_values
+    config[Satelite]['min_max_values_auto'] = min_max_values
 
-    
+    # Save config to JSON file
     with open('config.json', 'w') as f:
-        json.dump(config, f, indent=3)
+        json.dump(config, f, indent=5)
         
 def get_satelites(user_input_satelites):
+    # Create a dictionary of satelites
     satelites_dict = {
         "all": ["sentinel-1","sentinel-2", "landsat-8", "landsat-9"],
         "sentinel": ["sentinel-1","sentinel-2"],
@@ -36,11 +37,14 @@ def get_satelites(user_input_satelites):
         "landsat-8": ["landsat-8"],
         "landsat-9": ["landsat-9"]
     }
+    
+    # Create a list of satelites selected by the user
     sat_list = [] 
     for user_s in user_input_satelites:
         for s in satelites_dict[user_s]:
             sat_list.append(s)
     
+    # Make an unique list of satelites select by the user
     unique_sat_list = pd.Series(sat_list).drop_duplicates().tolist()
     
     return  unique_sat_list

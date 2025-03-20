@@ -134,18 +134,25 @@ def get_mask(path, aoi, size, timeframe):
         cv2.imwrite(path +'mask.jpg', img_zeros)
 
 
-def Check_image(idx, image, size):
-    # Image in cv2
+def Check_image(image, padding) -> bool:
+    # Decode the image into matrix
     decoded = cv2.imdecode(np.frombuffer(image, np.uint8), -1)
-    if decoded.shape[:2] == (size, size):
+    
+    # Cut padding
+    padding_size = ((padding,padding),(padding,padding),(0,0))
+    cropped_image = util.crop(decoded, padding_size)
+    
+    # Check if the image is square
+    if cropped_image.shape[0] in [cropped_image.shape[1]-1,cropped_image.shape[1],cropped_image.shape[1]+1]:
         size_match = True
     else:
         size_match = False
-        
-    if size_match == False or np.any(decoded[:,:,3] == 0):
-        return idx
+
+    # if the size doenst match or is any zero in the alpha channel
+    if size_match == False or np.any(cropped_image[:,:,3] == 0):
+        return False
     else:
-        return
+        return True
     
 def check_imgShape(aoi, size):
     aoi_mask = ee.Geometry.Polygon(aoi,None,False)
@@ -184,16 +191,35 @@ def check_imgShape(aoi, size):
     else:
         raise Exception("New case needs implementation.")
     
+
+def enhance_image_save(image_data_path, scale, save_path, image_name):   
+    # Takes the image data path and enhances it
+    image_pil = Image.open(image_data_path)
     
-    
-def cut_padding_and_enhance(image_data, opts):
+    # The maximum scale is 4
+    scale = min(scale, 4)
+    # Enhance the image, and resize if needed
+    if scale > 1:
+        model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=scale)
+        image_input = ImageLoader.load_image(image_pil)
+        pil_image_pred = model(image_input)
+        image_enh = ImageLoader._process_image_to_save(pil_image_pred)
+        
+        # Save the image
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        cv2.imwrite(os.path.join(save_path, image_name), image_enh)
+
+
+            
+def cut_padding_and_enhance(image_data, opts, encode = True, band_comb = False):
     # Padding size
     padding_size = ((opts.padding_size,opts.padding_size),(opts.padding_size,opts.padding_size),(0,0))
     # Decode image
     decoded_image = cv2.imdecode(np.frombuffer(image_data, np.uint8), -1)
     # Set scale to 1
     scale = 1
-    if opts.super_image:
+    if opts.super_image or band_comb:
         image_pil = Image.fromarray(cv2.cvtColor(decoded_image, cv2.COLOR_BGR2RGB))
         scale = math.ceil(opts.window_size/decoded_image.shape[0])
         scale = min(scale, 4)
@@ -204,16 +230,18 @@ def cut_padding_and_enhance(image_data, opts):
             image_input = ImageLoader.load_image(image_pil)
             pil_image_pred = model(image_input)
             image_enh = ImageLoader._process_image_to_save(pil_image_pred)
+
             cropped_image = util.crop(image_enh, padding_size)
             cropped_image = cv2.resize(cropped_image, (opts.window_size, opts.window_size))
-    
+
     # Remove padding if scale is 1, if greater than 1 the image is already cropped
     if scale == 1:     
         # Crop the image to remove the padding
         cropped_image = util.crop(decoded_image, padding_size)
-      
-    # Encode the image
-    _, img_encoded = cv2.imencode('.png', cropped_image)
-    encoded_image_bytes = img_encoded.tobytes()
     
-    return encoded_image_bytes
+    if encode:
+        # Encode the image
+        _, img_encoded = cv2.imencode('.png', cropped_image)
+        cropped_image = img_encoded.tobytes()
+    
+    return cropped_image

@@ -16,17 +16,17 @@ def get_argparser():
                         help="Config file saves information like, skiping bands and values that adjust the image quality.")
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=64))), 
+    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=124))), 
                         help="Format: YYYY-MM-DD, \nStarting date from witch we are going to start requesting images")
     parser.add_argument("--end_date", type=str, default=(str(date.today())), 
                         help="Format: YYYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
-    parser.add_argument("--window_size", type=int, default=128, 
+    parser.add_argument("--window_size", type=int, default=512, 
                         help="Options: 128, 256, 512, 1024. You can pick any resolution but keep and mind the area of your region, should be greater than 64.")
-    parser.add_argument("--satelites", type=str, default="LANDSAT, Sentinel-2", 
+    parser.add_argument("--satelites", type=str, default="landsat-8", 
                         help="Options: SENTINEL, [Sentinel-1, Sentinel-2], LANDSAT, [LandSat-8, LandSat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
     parser.add_argument("--enable_mask", type=bool, default=True,
                         help="Enable mask creation.")
-    parser.add_argument("--super_image", type=bool, default=True, 
+    parser.add_argument("--super_image", type=bool, default=False, 
                         help="Enable super-image creation. Since different sensores output different image sizes this is a option to make the images all the same size.")
     parser.add_argument("--max_cloud_coverage", type=int, default=10, 
                         help="Must be a number between 0 and 100.")
