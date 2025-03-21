@@ -10,8 +10,8 @@ Taking as an input one or more KML files, extracts the Regions of Interest(ROI),
 pip install -r requirements.txt
 ```
 2. Authenticate with Google Earth Engine:
-    Copy your ee-authfile.json and service_account.json to your project files.
-   [Tutorial - GEE Authentication Using API Key (Service Account)](https://www.youtube.com/watch?v=wHBUNDTvgtk)
+   ```Copy your ee-authfile.json and service_account.json to your project files.
+   [Tutorial - GEE Authentication Using API Key (Service Account)](https://www.youtube.com/watch?v=wHBUNDTvgtk)´´´
 3. Kml file:
    Create your kml file
    [Tutorial - KML google maps export](https://www.youtube.com/watch?v=LQz3kUMKMwU)
