@@ -11,9 +11,9 @@ pip install -r requirements.txt
 ```
 2. Authenticate with Google Earth Engine
     Copy your ee-authfile.json and service_account.json to your project files.
-   (https://www.youtube.com/watch?v=wHBUNDTvgtk),[Tutorial - GEE Authentication Using API Key (Service Account)]
+   [Tutorial - GEE Authentication Using API Key (Service Account)](https://www.youtube.com/watch?v=wHBUNDTvgtk)
 3. Kml file
-   (https://www.youtube.com/watch?v=LQz3kUMKMwU),[Tutorial - KML google maps export]
+   [Tutorial - KML google maps export](https://www.youtube.com/watch?v=LQz3kUMKMwU)
 ## Maize Fields
 Regions of interest in this project.
 ![plot](fig/fields.png)
