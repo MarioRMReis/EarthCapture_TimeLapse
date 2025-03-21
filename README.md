@@ -8,12 +8,11 @@ Taking as an input one or more KML files, extracts the Regions of Interest(ROI),
 `pip install -r requirements.txt`
 
 ## Setup
-'''sh
+```sh
 git clone https://github.com/MarioRMReis/EarthCapture_TimeLapse.git
 cd EarthCapture_TimeLapse
 pip install -r requirements.txt
-'''
-
+```
 ## Maize Fields
 Regions of interest in this project.
 ![plot](fig/fields.png)
