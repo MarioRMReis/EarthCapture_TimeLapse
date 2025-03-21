@@ -4,15 +4,16 @@ With a given list of regions of interst it retives all available images in a set
 ## Description
 Taking as an input one or more KML files, extracts the Regions of Interest(ROI), those ROI having the any given shape or size. Those regions are then centered in the choosen window and new Areas are created. Based on the picked colections a request is made to earth engine of all images of those areas in the given timeframe. A mask of the ROI in the created window is created for each Region of the KMLs.
 
-## Install dependencies:
-`pip install -r requirements.txt`
-
 ## Setup
+1. Install dependencies
 ```sh
-git clone https://github.com/MarioRMReis/EarthCapture_TimeLapse.git
-cd EarthCapture_TimeLapse
 pip install -r requirements.txt
 ```
+2. Authenticate with Google Earth Engine
+    Copy your ee-authfile.json and service_account.json to your project files.
+   (https://www.youtube.com/watch?v=wHBUNDTvgtk),[Tutorial - GEE Authentication Using API Key (Service Account)]
+3. Kml file
+   (https://www.youtube.com/watch?v=LQz3kUMKMwU),[Tutorial - KML google maps export]
 ## Maize Fields
 Regions of interest in this project.
 ![plot](fig/fields.png)
