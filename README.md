@@ -12,9 +12,43 @@ pip install -r requirements.txt
 2. Authenticate with Google Earth Engine:<br>
    Copy your ee-authfile.json and service_account.json to your project files.
    [Tutorial - GEE Authentication Using API Key (Service Account)](https://www.youtube.com/watch?v=wHBUNDTvgtk)
-3. Kml file:<br>
+3. Kml file (Multiple regions on the same KML file or in separeted files):<br>
    Create your kml file
    [Tutorial - KML google maps export](https://www.youtube.com/watch?v=LQz3kUMKMwU)
+
+## Results Structure
+```
+results/  
+ ├── region_name_0/             # Folder for a specific region  
+ │   ├── mask/                  # Mask images
+ │   │   ├── mask.png
+ │   ├── landsat/               # Landsat images
+ │   │   ├── landsat-8/         # landsat-8 images
+ │   │   │   ├── (...)          # Bands Folders  
+ │   │   ├── landsat-9/         # landsat-9 images  
+ │   │   │   ├── RGB/           # True color images  
+ │   │   │   ├── CIR/           # Color Infrared (CIR) images  
+ │   │   │   ├── RGA/           # Custom RGA composite images  
+ │   │   │   ├── B1/            # Single band images (e.g., Band 1)  
+ │   │   │   │   ├── img1.png  
+ │   │   │   │   ├── img2.png  
+ │   │   │   │   └── img3.png
+ │   ├── sentinel/              # Sentinel folder  
+ │   │   ├── sentinel-1/        # Sentinel-1 images
+ │   │   │   ├── (...)          # Bands Folders  
+ │   │   ├── sentinel-2/        # Sentinel-2 images  
+ │   │   │   ├── RGB/           # True color images  
+ │   │   │   ├── CIR/           # Color Infrared (CIR) images  
+ │   │   │   ├── RGA/           # Custom RGA composite images  
+ │   │   │   ├── B1/            # Single band images (e.g., Band 1)  
+ │   │   │   │   ├── img1.png  
+ │   │   │   │   ├── img2.png  
+ │   │   │   │   └── img3.png
+ ├── region_name_1/             # Folder for a specific region
+ │   ├── (...) 
+```
+
 ## Maize Fields
 Regions of interest in this project.
 ![plot](fig/fields.png)
+
