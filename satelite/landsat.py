@@ -103,5 +103,5 @@ def image_request_landsat9(roi, band, opts, aoi_name):
         img_data = requests.get(url).content
         img_data = geometry.cut_padding_and_enhance(img_data, opts)
 
-        with open(path  + '/' + id + '.png', 'wb') as handler:        
+        with open(path  + '/' + id + '_Size-' + opts.window_size +'.png', 'wb') as handler:        
             handler.write(img_data)

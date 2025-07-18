@@ -16,13 +16,13 @@ def get_argparser():
                         help="Config file saves information like, skiping bands and values that adjust the image quality.")
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=124))), 
+    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=200))), 
                         help="Format: YYYY-MM-DD, \nStarting date from witch we are going to start requesting images")
     parser.add_argument("--end_date", type=str, default=(str(date.today())), 
                         help="Format: YYYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
-    parser.add_argument("--window_size", type=int, default=512, 
+    parser.add_argument("--window_size", type=int, default=124, 
                         help="Options: 128, 256, 512, 1024. You can pick any resolution but keep and mind the area of your region, should be greater than 64.")
-    parser.add_argument("--satelites", type=str, default="landsat-8", 
+    parser.add_argument("--satelites", type=str, default="ALL", 
                         help="Options: SENTINEL, [Sentinel-1, Sentinel-2], LANDSAT, [LandSat-8, LandSat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
     parser.add_argument("--enable_mask", type=bool, default=True,
                         help="Enable mask creation.")
@@ -50,7 +50,7 @@ def main():
     # Trigger the authentication flow.
     SAccount_json = config_handler.load_config("service_account.json")
     service_account = SAccount_json["service_account"]
-    credentials = ee.ServiceAccountCredentials(service_account, "ee-mariormr0010-a3b10aa94917.json")
+    credentials = ee.ServiceAccountCredentials(service_account, "generated_EE.json")
     
     # Initialize the library.
     ee.Initialize(credentials)
