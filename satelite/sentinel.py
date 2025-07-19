@@ -129,7 +129,7 @@ def image_request_Sentinel2(aoi, band_num, config, opts, aoi_name, incomplete_im
         id = img.id().getInfo()
         
         # Check if the set of bands selected has the same resolution
-        if len(set(config["resolution"])) != 1:
+        if isinstance(config['resolution'], list):
             img_array = []
             for j, band in enumerate(config['bands']):
                 # Image request
@@ -158,7 +158,7 @@ def image_request_Sentinel2(aoi, band_num, config, opts, aoi_name, incomplete_im
             # Merge the images into a single image
             img_data = np.stack([img_array[0],img_array[1],img_array[2]], axis=-1)
             # Encode the image
-            _, img_data = cv2.imencode('.png', img_data)
+            _, img_data = cv2.imencode(opts.image_format, img_data)
             img_data = img_data.tobytes()
         else:
             # Get the image with the selected band(s)
@@ -175,7 +175,7 @@ def image_request_Sentinel2(aoi, band_num, config, opts, aoi_name, incomplete_im
             img_data = geometry.cut_padding_and_enhance(img_data, opts)
             
         # Save the image
-        with open(path  + '/' + id + '.png', 'wb') as handler:        
+        with open(path  + '/' + id + opts.image_format, 'wb') as handler:        
             handler.write(img_data)
                     
     # Return the index os the incomplete images, even if its not altered

@@ -48,6 +48,9 @@ def check_opts(opts):
     # Check if max_cloud_coverage is an integer between 0 and 100
     if not isinstance(opts.max_cloud_coverage, int) or not (0 <= opts.max_cloud_coverage <= 100):
         errors.append(f"max_cloud_coverage should be an integer between 0 and 100. Got: {opts.max_cloud_coverage}")
+        
+    if opts.image_format not in ['.tiff', '.png', '.jpg']:
+        errors.append(f"image_format should be one of ['.tiff', '.png', '.jpg']. Got: {opts.image_format}")
 
     # Return errors if any
     if errors:

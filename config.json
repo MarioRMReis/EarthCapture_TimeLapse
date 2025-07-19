@@ -135,22 +135,13 @@
                "SWIR21B",
                "CIR",
                "SWIR21R",
-               "RGA"
+               "RGA",
+               "RGB"
           ],
           "skip_bands": [
                "B1",
-               "B2",
-               "B3",
-               "B4",
-               "B5",
-               "B6",
-               "B7",
-               "B8",
-               "B8A",
                "B9",
                "B10",
-               "B11",
-               "B12",
                "QA10",
                "QA20",
                "QA60",
@@ -411,14 +402,22 @@
                ]
           },
           "add_bands": [
-               "SWIR21R"
+               "RGB",
+               "SWIR21R",
+               "NRG",
+               "SWIR1NB",
+               "SWIR21N",
+               "NSWIRB",
+               "NSWIRR",
+               "SWIR2NG",
+               "SWIR2NR",
+               "SWIRN1R"
           ],
           "skip_bands": [
-               "SR_B2",
-               "SR_B3",
-               "SR_B4",
+               "B1",
+               "B9",
+               "B10",
                "SR_QA_AEROSOL",
-               "ST_B10",
                "ST_ATRAN",
                "ST_CDIST",
                "ST_DRAD",
@@ -684,15 +683,20 @@
           },
           "add_bands": [
                "RGB",
-               "SWIR21R"
+               "SWIR21R",
+               "NRG",
+               "SWIR1NB",
+               "SWIR21N",
+               "NSWIRB",
+               "NSWIRR",
+               "SWIR2NG",
+               "SWIR2NR",
+               "SWIRN1R"
           ],
           "skip_bands": [
-               "SR_B2",
-               "SR_B3",
-               "SR_B4",
                "SR_QA_AEROSOL",
-               "ST_B10",
                "ST_ATRAN",
+               "ST_B10",
                "ST_CDIST",
                "ST_DRAD",
                "ST_EMIS",

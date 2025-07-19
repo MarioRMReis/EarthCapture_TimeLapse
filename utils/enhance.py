@@ -55,7 +55,7 @@ def cut_padding_and_enhance(image_data, opts, encode = True, band_comb = False) 
     
     if encode:
         # Encode the image
-        _, img_encoded = cv2.imencode('.png', cropped_image)
+        _, img_encoded = cv2.imencode(opts.image_format, cropped_image)
         cropped_image = img_encoded.tobytes()
     
     return cropped_image

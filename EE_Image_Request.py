@@ -16,13 +16,13 @@ def get_argparser():
                         help="Config file saves information like, skiping bands and values that adjust the image quality.")
     parser.add_argument("--save_folder", type=str, default="results", 
                         help="Path to save the EarthEngine images and the corresponding masks.")
-    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=200))), 
+    parser.add_argument("--start_date", type=str, default=(str(date.today() - timedelta(days=31))), 
                         help="Format: YYYY-MM-DD, \nStarting date from witch we are going to start requesting images")
     parser.add_argument("--end_date", type=str, default=(str(date.today())), 
                         help="Format: YYYY-MM-DD, \nEnding date from witch we are going sto stop requesting images")
     parser.add_argument("--window_size", type=int, default=124, 
                         help="Options: 128, 256, 512, 1024. You can pick any resolution but keep and mind the area of your region, should be greater than 64.")
-    parser.add_argument("--satelites", type=str, default="ALL", 
+    parser.add_argument("--satelites", type=str, default="LANDSAT", 
                         help="Options: SENTINEL, [Sentinel-1, Sentinel-2], LANDSAT, [LandSat-8, LandSat-9]: ALL. Separate with a comma the different desired options, Sentinel and Landsat contains the other options. ALL selects all available options.")
     parser.add_argument("--enable_mask", type=bool, default=True,
                         help="Enable mask creation.")
@@ -32,30 +32,24 @@ def get_argparser():
                         help="Must be a number between 0 and 100.")
     parser.add_argument("--padding_size", type=int, default=8,
                         help="This will determine the size of the padding used in the fetched request. Padding size, used to get sharper edgeds on the image. If the image request is the same size as the intended the image is blurry at the edges.")
-    parser.add_argument("--min_max_values", type=bool, default=True,
+    parser.add_argument("--min_max_values", type=bool, default=False,
                         help="Changes the min_max values of the configuration file to the ones provided by the Reducer.minMax() function.")
+    parser.add_argument("--image_format", type=str, default=".png",
+                        help="Options: .png, .jpg, .tiff. The default is .png.")
     return parser
 
 
 def main():
-    # Get input arguments
     opts = get_argparser().parse_args()
-    
-    # Load configuration file
     config = config_handler.load_config(opts.config_file)
-
-    # Just to make sure that the arguments added by the user are valid
     data_validation.check_opts(opts)
-    
-    # Trigger the authentication flow.
+
     SAccount_json = config_handler.load_config("service_account.json")
     service_account = SAccount_json["service_account"]
     credentials = ee.ServiceAccountCredentials(service_account, "generated_EE.json")
-    
-    # Initialize the library.
     ee.Initialize(credentials)
 
-    # Get all the kml files in the folder
+
     kml_files = os.listdir('roi')
     
     # Sparate all areas of interest, append to the list. Append names to the names list
