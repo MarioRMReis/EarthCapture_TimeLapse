@@ -48,6 +48,10 @@ results/
  │   ├── (...) 
 ```
 
+## Usage
+
+```bash python EE_Image_Request.py --satelites "ALL" --window_size 124 --start_date "2025-01-07" --end_date "2025-07-15"
+
 ## Maize Fields
 Regions of interest in this project.
 ![plot](fig/fields.png)
