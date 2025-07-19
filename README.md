@@ -50,7 +50,23 @@ results/
 
 ## Usage
 
-```bash python EE_Image_Request.py --satelites "ALL" --window_size 124 --start_date "2025-01-07" --end_date "2025-07-15"```
+```sh
+python EE_Image_Request.py --satelites "ALL" --window_size 124 --start_date "2025-01-07" --end_date "2025-07-15"
+```
+
+## Results Preview
+
+Sentinel-2
+
+![RGB](fig/RGB_Sentinel-2.png) ![CIR](fig/CIR_Sentinel-2.png) ![B4](fig/B4_Sentinel-2.png) ![B8](fig/B8_Sentinel-2.png)
+
+Sentinel-1 
+
+![RGB](fig/RGB_Sentinel-1.png) ![VH](fig/VH_Sentinel-1.png) ![VV](fig/VV_Sentinel-1.png)
+
+Landsat 
+
+![RGB](fig/RGB_Landsat.png) ![NRG](fig/NRG_Landsat.png) ![B7](fig/B7_Landsat.png) 
 
 ## Maize Fields
 Regions of interest in this project.
